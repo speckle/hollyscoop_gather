@@ -1,0 +1,30 @@
+页面采集功能上线流程:
+1.连接服务器
+2.进入文件夹:
+cd /data/app/cdn.iciba.com/news
+mkdir caiji
+chmod 777 -R caiji/
+caiji文件夹用来保存文章采集下载的图片
+3.代码上传	
+cd /data/app/phpcms/
+svn checkout url
+4.将Caiji页面中sql导入服务器mysql
+建立一个名为php_caiji的数据库(表示为采集功能)
+mysql> create database php_caiji;
+     > use php_caiji;
+     > source /data/app/phpcms/Caiji/news.sql;
+5.配置Caiji文件夹中的config.php文件
+config['db_host']为mysql host
+config['db_name']为sql文件导入的db_name
+config['db_cms_name']为phpcms后台的数据库名
+config['db_user']   mysql用户名
+config['db_password']  mysql密码
+6.手工测试脚本
+php /data/app/phpcms/Caiji/get_hollyscoop.php
+php /data/app/phpcms/Caiji/download.php
+如果没有错误则使用public无线网访问Caiji测试限制ip,正确状态应无法访问,返回404页面
+7.生成crontab脚本
+crontab -e
+0 9 * * * /usr/local/php/bin/php -f /data/app/phpcms/Caiji/get_hollyscoop.php
+*/10 * * * * /usr/local/php/bin/php -f /data/app/phpcms/Caiji/download.php
+8.上线完成
